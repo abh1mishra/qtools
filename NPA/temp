@@ -1,0 +1,24 @@
+# def probSetMaker(self):
+#     self.probSet={}
+#     for i in self.row[1:]:
+#         print(i)
+#         elem_len=len(i)
+#         k_arr=[]#abc
+#         l_arr=[]#input
+#         m_arr=[]#output
+#         for j in range(elem_len):#loops over [1,2,3] in rows
+#             for k in range(self.numParty):
+#                 if(self.flatOprArray[k][0]<=i[j]<=self.flatOprArray[k][-1]):
+#                     k_arr.append(chr(ord('a')+k))
+#                     break
+#             for l in range(len(self.bell_array[k])):
+#                 if(self.bell_array[k][l][0]<=i[j]<=self.bell_array[k][l][-1]):
+#                     l_arr.append(str(l))
+#                     break
+#             for m in range(len(self.bell_array[k][l])):
+#                 if(self.bell_array[k][l][m]==i[j]):
+#                     m_arr.append(str(m))
+#         s="".join(["p"]+k_arr+["("]+m_arr+["|"]+l_arr+[")"])
+#         temp=cv.Variable()
+#         self.probSet[s]=temp
+#         self.probSet[tuple(i)]=temp
