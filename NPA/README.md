@@ -1,6 +1,8 @@
 # qtools
 ## Library to implement various quantum tools like state discrimination, non local games etc
 
+**This is in development mode.
+
 ### My first addition is NPA hierarchy unlike available libraries this implementation is general for any Bell Scenario and any array of cosntraints. 
 ### This for now just implements the intermediate or Q_1+ABC.. type hierarchy. 
 ### You just need to input the Bell Scenario and add the non-trivial constraints and the code will take care of the rest.
