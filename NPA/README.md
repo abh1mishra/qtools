@@ -1,7 +1,7 @@
 # qtools
 ## Library to implement various quantum tools like state discrimination, non local games etc
 
-**This is in development mode.**
+- ![#f03c15](https://via.placeholder.com/15/f03c15/f03c15.png) `This is in development mode`
 
 ### My first addition is NPA hierarchy unlike available libraries this implementation is general for any Bell Scenario and any array of cosntraints. 
 ### This for now just implements the intermediate or Q_1+ABC.. type hierarchy. 
