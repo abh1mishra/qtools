@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Abhishek"
+  given-names: "Mishra"
+- family-names: "Bot"
+  given-names: "Hew"
+title: "Theoretical Quantum Tools"
+version: 1.0.0
+doi: 10.5281/zenodo.8475
+date-released: 2022-01-01
+url: "https://github.com/abh1mishra/qtools/"
