@@ -71,27 +71,28 @@ class NpaHierarchy:
 
 
     def AMaker(self):
-        # for sod in self.probStrSet:
-        #     print(sod,self.probStrSet[sod])
-        # print(self.probStrSet)
         A=np.empty((len(self.row),len(self.row)),dtype=object)
         for j in range(len(self.row)):
             for k in range(len(self.row)):
                 str=np.concatenate([self.row[j][::-1],self.row[k]])
-                # print(str,end=" ")
                 A[j][k]=self.processStrings(str)
-                # print(A[j][k],end=" ")
                 if(j!=k):
                     A[k][j]=(A[j][k])
-            # print()
         A=cv.bmat(A)
         self.trivialConstraints.append(A>>0)
 
-
-    def rowMaker(self):
+    def rowMaker(self,level=None):
         s=list(range(self.numParty))
         self.flatOprArray=[tuple(chain.from_iterable(i)) for i in self.bell_array]
-        comb=list(chain.from_iterable(combinations(s, r) for r in range(1,len(s)+1)))
+        if(level is None):
+            comb=list(chain.from_iterable(combinations(s, r) for r in range(1,len(s)+1)))
+        else:
+            level1=[[i] for i in s]
+            comb=leveli=level1
+            for i in range(1,level):
+                leveli=[j +[k] for j in leveli for k in range(j[-1],self.numParty)]
+                comb+=leveli
+
         self.row=[()]+[tuple([j]) for i in self.flatOprArray for j in i]
         for i in comb[self.numParty:]:
             self.row+=[k for k in product(*[self.flatOprArray[j] for j in i])]
@@ -121,7 +122,7 @@ class NpaHierarchy:
 
 
 
-    def __init__(self,oprArray=None,inputs=2,outputs=2):
+    def __init__(self,oprArray=None,inputs=2,outputs=2,level=None):
         self.bell_array=oprArray
         if(type(self.bell_array) is int):
             if(self.bell_array>0):
@@ -149,7 +150,6 @@ class NpaHierarchy:
                 l=k+self.bell_array[i][j]
                 self.bell_array[i][j]=list(range(k,l))
                 k=l
-        # print(self.bell_array)
         self.groups=[set(j) for i in self.bell_array for j in i]
-        self.rowMaker()
+        self.rowMaker(level=level)
         self.AMaker()
