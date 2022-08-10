@@ -11,7 +11,7 @@
 
 ## Methods of Installation
 - Start by placing [NPAsolver.py](https://github.com/abh1mishra/qtools/blob/main/NPA/NPAsolver.py) into your project directory along side your driver codes.
-- MOSEK and CVXPY are prerequisites.
+- MOSEK NUMPY and CVXPY are prerequisites.
 - Refer the file structure in [NPA Folder](https://github.com/abh1mishra/qtools/tree/main/NPA) where [check.py](https://github.com/abh1mishra/qtools/blob/main/NPA/check.py) is the driver code.
 
 ## Instantaiting NpaHierarchy Class
