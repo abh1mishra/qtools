@@ -57,8 +57,8 @@ b.addObjective("pa(0|0)-pab(00|00)-pab(00|01)-pab(00|02)+pab(00|10)+pab(10|11)+p
 ## Note:
 - Now the code suppots a particular form of probability vectors inside addconstraints and addObjective functions.
   - The Probabilties cannot have the last outcome for any input, instead it needs to be written in particular format.
-  - The banned probabilties can be expanded by thinking prob. as moments of projectors ($\langle \Pi_a^x \Pi_b^y \rangle$)
+  - The banned probabilties can be expanded by thinking prob. as moments of projectors $\langle \Pi_a^x \Pi_b^y \rangle $
   - The prob. with last projector for a given input can then be written as $I(\textrm{identity})-\sum(\textrm{other outcomes of the inputs})$
-  - For eg, in CHSH case, pab(10|11)= $\langle (I-\Pi_0^1)_A (\Pi_0^1)_B \rangle = $ pb(0|1)-pab(00|11) 
+  - For eg, in CHSH case, pab(10|11)= $\langle (I-\Pi_0^1)_A (\Pi_0^1)_B \rangle =$ pb(0|1)-pab(00|11) 
 - For now only <= and = is supported. You can frame in this format if possible. We will be adding more types.
 - You can use python fstring to update values in your constraints
