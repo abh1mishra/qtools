@@ -8,10 +8,10 @@ class NpaHierarchy:
 
     def joinProjectors(self,arr):
         arr=np.delete(arr,np.where(np.diff(arr)==0))
-        return tuple(arr)
+        return arr
 
     def sepAandB(self,arr):
-        return tuple(np.concatenate([np.extract((arr>=i[0])&(arr<=i[-1]),arr) for i in self.flatOprArray]))
+        return np.concatenate([np.extract((arr>=i[0])&(arr<=i[-1]),arr) for i in self.flatOprArray])
 
     def checkZero(self,arr):
         for i in range(len(arr)-1):
@@ -25,15 +25,15 @@ class NpaHierarchy:
         arr=self.joinProjectors(arr)
         if(self.checkZero(arr)==0):
             return 0
-        # arr=arr.astype('int64')
+        arr=arr.astype('int64')
         if(tuple(arr) in self.probTupleSet):
             return self.probTupleSet[tuple(arr)]
-        if not(arr in self.varSet):
+        if not(f"{arr}" in self.varSet):
             tempVar=cv.Variable()
-            self.varSet[arr]=tempVar
+            self.varSet[f"{arr}"]=tempVar
             return tempVar
-        return self.varSet[arr]
-
+        return self.varSet[f"{arr}"]
+        
     def addObjective(self,objective):
         self.addConstraints(objective=[objective])
 
@@ -88,23 +88,18 @@ class NpaHierarchy:
     def rowMaker(self,level=None):
         s=list(range(self.numParty))
         self.flatOprArray=[tuple(chain.from_iterable(i)) for i in self.bell_array]
-        # print(f"Flat oprArray: {self.flatOprArray}")
-        comb=list(chain.from_iterable(combinations(s, r) for r in range(1,len(s)+1)))
         if(level is None):
-            rowComb=comb
+            comb=list(chain.from_iterable(combinations(s, r) for r in range(1,len(s)+1)))
         else:
-            level1=[(i,) for i in s]
-            rowComb=leveli=level1
+            level1=[[i] for i in s]
+            comb=leveli=level1
             for i in range(1,level):
-                leveli=[j +(k,) for j in leveli for k in range(j[-1],self.numParty)]
-                rowComb+=leveli
-        # print(f"Comb: {comb}")
+                leveli=[j +[k] for j in leveli for k in range(j[-1],self.numParty)]
+                comb+=leveli
+
         self.row=[()]+[tuple([j]) for i in self.flatOprArray for j in i]
-        for i in rowComb[self.numParty:]:
+        for i in comb[self.numParty:]:
             self.row+=[k for k in product(*[self.flatOprArray[j] for j in i])]
-        self.row=list(map(self.joinProjectors,self.row))
-        self.row=list(dict.fromkeys(self.row))
-        # print(f"Rows: {len(self.row)}")
         self.probStrSet={}
         self.probTupleSet={}
         self.probTupleSet[()]=1
@@ -115,7 +110,7 @@ class NpaHierarchy:
             for j in TinputArr:
                 k_str="".join([str(t) for t in j])
                 ToutputArray=tuple(product(*[tuple(range(len(self.bell_array[i[k]][j[k]]))) for k in range(len(j))]))
-                # Tconstraint=0
+                Tconstraint=0
                 for k in ToutputArray:
                     l_str="".join([str(t) for t in k])
                     finalTuple=tuple(self.bell_array[i[t]][j[t]][k[t]] for t in range(len(k)))
@@ -125,13 +120,8 @@ class NpaHierarchy:
                     self.trivialConstraints.append(rowVariable>=0)
                     self.probStrSet[finalStr]=rowVariable
                     self.probTupleSet[finalTuple]=rowVariable
-                    # Tconstraint+=rowVariable
-                # self.trivialConstraints.append(Tconstraint==1)
-        # print(f"ProbSet : {[[i,self.probStrSet[i].name()]for i in self.probStrSet]}")
-        # del self.probTupleSet[()]
-        # print()
-        # print(f"ProbSet : {[[i,self.probTupleSet[i].name()]for i in self.probTupleSet]}")
-
+                    Tconstraint+=rowVariable
+                self.trivialConstraints.append(Tconstraint==1)
 
 
 
@@ -139,13 +129,12 @@ class NpaHierarchy:
     def __init__(self,oprArray=None,inputs=2,outputs=2,level=None):
         #this generates the bell_array from the Bell Scenario
         self.bell_array=oprArray
-        # print(self.bell_array)
         #bell_array should eventaully be of form
         #[[[output1,output2,...]_Input1,[output1,output2,...]_Input2,[output1,output2,...]_Input3]_A,[[output1,output2,...]_Input1,[output1,output2,...]_Input2,[output1,output2,...]_Input3]_Bob,[[output1,output2,...]_Input1,[output1,output2,...]_Input2]_Charlie]
         #so eg. of bell_array would be [[[1,2,3],[4,5,6]],[[7,8],[9,10]],[[11,12],[13,14,15]]]
         #corressponding to Alice having 2 inputs with 2 outputs each,Bob 2 inputs 2 outcomes each and Charlie 2 inputs with first 2 outcomes and 2nd 3 outcomes,
         #We capture the Bell Scenario using various formats.
-        #we can just take number of parties and capture number of input for each party using inputs parameter and outcomes per input using outcomes parameter
+        #we can just take number of parties and capture number of input for each party using inouts parameter and outcomes per input using outcoems parameter
         #Or we can have number of inputs for Alice ,Bob, Charlie ,.. etc. as an array [2,3,2,..] and then number of outputs per inputs as above
         #Or we can take Bell Scenario as 2D array as [[3,3],[2,2],[2,3]] as eg. above but we write number of outcomes instead of the outcome index itself.
 
@@ -156,7 +145,7 @@ class NpaHierarchy:
                 raise Exception("error parsing due to negative bell scenario inputs")
         if(type(self.bell_array) is list):
             if(all(isinstance(n, int) for n in self.bell_array)):
-                if(all(n>0 for n in self.bell_array)):
+                if(all(n>0) for n in self.bell_array):
                     self.bell_array=[[outputs for j in range(i)] for i in self.bell_array]
                 else:
                     raise Exception("error parsing due to negative bell scenario inputs")
@@ -172,13 +161,10 @@ class NpaHierarchy:
         k=0
         for i in range(len(self.bell_array)):
             for j in range(len(self.bell_array[i])):
-                l=k+self.bell_array[i][j]-1
+                l=k+self.bell_array[i][j]
                 self.bell_array[i][j]=list(range(k,l))
                 k=l
-        # print(f"Bell Array: {self.bell_array}")
         self.varSet={}
         self.groups=[set(j) for i in self.bell_array for j in i]
-        # print(f"Groups: {self.groups}")
         self.rowMaker(level=level)
         self.AMaker()
-# NpaHierarchy(3,inputs=2,outputs=2,level=2)
