@@ -1,6 +1,6 @@
 import numpy as np
 # import mosek
-from NPAsolver3 import NpaHierarchy
+from NPAsolver import NpaHierarchy
 
 b=NpaHierarchy(2,level=2)
 
